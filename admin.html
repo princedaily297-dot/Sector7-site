@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sector 7 - Admin Command</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap');
+        body { font-family: 'Rajdhani', sans-serif; background-color: #050505; color: #fff; }
+        .tech-font { font-family: 'Share Tech Mono', monospace; }
+        .tactical-border { border: 1px solid #333; box-shadow: 0 0 20px rgba(234, 179, 8, 0.1); background: #0a0a0a; }
+    </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center">
+
+    <div class="w-full max-w-md mt-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-widest text-white">Admin Command</h1>
+                <p class="tech-font text-xs text-orange-500 mt-1">SECTOR 7 // CLASSIFIED</p>
+            </div>
+            <a href="index.html" class="tech-font text-xs bg-red-900/50 border border-red-700 text-red-400 px-3 py-1 rounded hover:bg-red-800 transition">EXIT</a>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="tactical-border p-4 rounded text-center">
+                <p class="tech-font text-gray-400 text-xs mb-1 uppercase">Total Users</p>
+                <p id="totalUsers" class="text-3xl font-bold text-white">0</p>
+            </div>
+            <div class="tactical-border p-4 rounded text-center">
+                <p class="tech-font text-gray-400 text-xs mb-1 uppercase">Paid Recruits</p>
+                <p id="paidUsers" class="text-3xl font-bold text-yellow-500">0</p>
+            </div>
+        </div>
+
+        <!-- User List -->
+        <div class="tactical-border rounded p-4">
+            <h2 class="text-lg font-bold text-white mb-4 border-b border-gray-800 pb-2">Registered Agents</h2>
+            <div id="userList" class="space-y-2 max-h-96 overflow-y-auto text-sm font-sans">
+                <p class="tech-font text-gray-500 italic">Scanning database...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmu8zINhqaI7F-hH5gDeRC51oClBEnJ9A",
+            authDomain: "sector-7-esports.firebaseapp.com",
+            projectId: "sector-7-esports",
+            storageBucket: "sector-7-esports.firebasestorage.app",
+            messagingSenderId: "268248649597",
+            appId: "1:268248649597:web:5d6dc3288bd474ef080614"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadUsers() {
+            const userListDiv = document.getElementById('userList');
+            const totalUsersEl = document.getElementById('totalUsers');
+            const paidUsersEl = document.getElementById('paidUsers');
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                
+                let count = 0;
+                let paidCount = 0;
+                let html = "";
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    count++;
+                    if(data.paymentStatus === "Paid") paidCount++;
+
+                    html += `
+                        <div class="flex justify-between items-center bg-black p-3 border border-gray-800 rounded mb-2">
+                            <div>
+                                <p class="text-white font-bold">${data.email}</p>
+                                <p class="tech-font text-[10px] text-gray-500 mt-1">${new Date(data.joinedAt).toLocaleDateString()}</p>
+                            </div>
+                            <span class="tech-font text-[10px] px-2 py-1 rounded ${data.paymentStatus === 'Paid' ? 'bg-green-900/50 text-green-400 border border-green-800' : 'bg-red-900/50 text-red-400 border border-red-800'}">
+                                ${data.paymentStatus}
+                            </span>
+                        </div>
+                    `;
+                });
+
+                totalUsersEl.innerText = count;
+                paidUsersEl.innerText = paidCount;
+                
+                if (count === 0) {
+                    userListDiv.innerHTML = `<p class="tech-font text-gray-500 italic">No agents registered yet.</p>`;
+                } else {
+                    userListDiv.innerHTML = html;
+                }
+
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                userListDiv.innerHTML = `<p class="text-red-500 tech-font">Error connecting to database.</p>`;
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>
