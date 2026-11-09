@@ -15,16 +15,15 @@
 <body class="min-h-screen p-4 flex flex-col items-center">
 
     <div class="w-full max-w-md mt-6">
-        <!-- Header -->
         <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
             <div>
                 <h1 class="text-2xl font-bold uppercase tracking-widest text-white">Admin Command</h1>
                 <p class="tech-font text-xs text-orange-500 mt-1">SECTOR 7 // CLASSIFIED</p>
             </div>
+            <!-- EXIT GOES BACK TO LOGIN SCREEN -->
             <a href="index.html" class="tech-font text-xs bg-red-900/50 border border-red-700 text-red-400 px-3 py-1 rounded hover:bg-red-800 transition">EXIT</a>
         </div>
 
-        <!-- Stats Panel -->
         <div class="grid grid-cols-2 gap-4 mb-6">
             <div class="tactical-border p-4 rounded text-center">
                 <p class="tech-font text-gray-400 text-xs mb-1 uppercase">Total Users</p>
@@ -36,7 +35,6 @@
             </div>
         </div>
 
-        <!-- User List -->
         <div class="tactical-border rounded p-4">
             <h2 class="text-lg font-bold text-white mb-4 border-b border-gray-800 pb-2">Registered Agents</h2>
             <div id="userList" class="space-y-2 max-h-96 overflow-y-auto text-sm font-sans">
@@ -68,10 +66,7 @@
 
             try {
                 const querySnapshot = await getDocs(collection(db, "users"));
-                
-                let count = 0;
-                let paidCount = 0;
-                let html = "";
+                let count = 0; let paidCount = 0; let html = "";
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
@@ -94,18 +89,13 @@
                 totalUsersEl.innerText = count;
                 paidUsersEl.innerText = paidCount;
                 
-                if (count === 0) {
-                    userListDiv.innerHTML = `<p class="tech-font text-gray-500 italic">No agents registered yet.</p>`;
-                } else {
-                    userListDiv.innerHTML = html;
-                }
+                if (count === 0) { userListDiv.innerHTML = `<p class="tech-font text-gray-500 italic">No agents registered yet.</p>`; } 
+                else { userListDiv.innerHTML = html; }
 
             } catch (error) {
-                console.error("Error fetching users:", error);
                 userListDiv.innerHTML = `<p class="text-red-500 tech-font">Error connecting to database.</p>`;
             }
         }
-
         loadUsers();
     </script>
 </body>
