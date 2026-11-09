@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sector 7 - Free Fire Tournament</title>
+    <title>Sector 7 - Secure Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap');
-        
         body { 
             font-family: 'Rajdhani', sans-serif; 
             background-color: #050505; 
@@ -17,395 +16,145 @@
             background-position: center top;
             background-attachment: fixed;
         }
-
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(5, 0, 0, 0.95) 100%);
-            z-index: -1;
-        }
-
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(10, 5, 0, 0.95) 100%); z-index: -1; }
         .tech-font { font-family: 'Share Tech Mono', monospace; }
-        
-        .tactical-card { 
-            border: 1px solid #444; 
-            box-shadow: 0 0 30px rgba(234, 179, 8, 0.15);
-            background: rgba(10, 10, 10, 0.9);
-            backdrop-filter: blur(12px);
-            position: relative;
-        }
-
-        .premium-btn {
-            background: linear-gradient(90deg, #ea580c 0%, #eab308 100%);
-            color: #000;
-            transition: all 0.3s ease;
-            text-shadow: 0px 0px 2px rgba(255,255,255,0.5);
-        }
-        .premium-btn:hover {
-            box-shadow: 0 0 20px rgba(234, 88, 12, 0.8);
-            transform: scale(1.02);
-        }
-
-        .neon-border {
-            border: 2px solid #ea580c;
-            box-shadow: 0 0 15px #ea580c, inset 0 0 15px #ea580c;
-            animation: neonPulse 2s infinite alternate;
-        }
-        @keyframes neonPulse {
-            from { box-shadow: 0 0 10px #ea580c, inset 0 0 10px #ea580c; }
-            to { box-shadow: 0 0 25px #ea580c, inset 0 0 25px #ea580c; }
-        }
-
-        .spinner { border: 4px solid rgba(234, 88, 12, 0.3); border-top: 4px solid #ea580c; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
-        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
-
-        .mode-btn {
-            border: 1px solid #555;
-            background: rgba(0,0,0,0.5);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .mode-btn.active {
-            border: 2px solid #ea580c;
-            background: rgba(234, 88, 12, 0.2);
-            box-shadow: 0 0 10px rgba(234, 88, 12, 0.5);
-        }
-
+        .tactical-card { border: 1px solid #444; box-shadow: 0 0 30px rgba(234, 179, 8, 0.15); background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px); position: relative; }
+        .hud-corner { position: absolute; width: 20px; height: 20px; border-color: #eab308; border-style: solid; }
+        .hud-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+        .hud-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+        .hud-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+        .hud-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+        .premium-btn { background: linear-gradient(90deg, #ea580c 0%, #eab308 100%); color: #000; transition: all 0.3s ease; text-shadow: 0px 0px 2px rgba(255,255,255,0.5); }
+        .premium-btn:hover { box-shadow: 0 0 20px rgba(234, 88, 12, 0.8); transform: scale(1.02); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
     <div class="overlay"></div>
 
-    <!-- SECRET ADMIN BUTTON -->
-    <div class="absolute top-4 right-4 z-50">
-        <button onclick="showAdminLogin()" class="w-10 h-10 bg-black/80 border border-orange-500 rounded-full text-orange-500 font-bold hover:bg-orange-600 hover:text-white transition shadow-[0_0_10px_rgba(234,88,12,0.5)]">
-            R
-        </button>
-    </div>
+    <div class="w-full max-w-md tactical-card rounded-md p-8 relative z-10">
+        <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div><div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
 
-    <!-- ADMIN PASSWORD SCREEN -->
-    <div id="adminLoginScreen" class="hidden w-full max-w-sm tactical-card neon-border rounded-xl p-8 relative z-50 text-center">
-        <div class="mb-4">
-            <svg class="w-16 h-16 text-orange-500 mx-auto drop-shadow-[0_0_10px_rgba(234,88,12,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-        </div>
-        <h2 class="text-2xl font-bold uppercase tracking-widest text-white mb-1">Restricted Area</h2>
-        <p class="tech-font text-xs text-orange-500 mb-6">Enter Admin Clearance Code</p>
-
-        <input type="password" id="adminPasswordInput" class="w-full bg-black border-2 border-gray-700 rounded-lg p-3 text-center text-white tracking-widest focus:outline-none focus:border-orange-500 transition mb-4" placeholder="••••••••">
-        
-        <p id="adminError" class="tech-font text-red-500 text-xs font-bold mb-4 hidden">ACCESS DENIED. INCORRECT CODE.</p>
-
-        <button onclick="checkAdminPassword()" class="premium-btn w-full font-bold py-3 rounded-lg uppercase tracking-widest text-lg">
-            Verify Code
-        </button>
-        
-        <button onclick="closeAdminLogin()" class="mt-4 text-xs tech-font text-gray-500 hover:text-white transition">
-            [ CANCEL ]
-        </button>
-    </div>
-
-
-    <!-- STEP 1: MAIN LANDING -->
-    <div id="step1" class="w-full max-w-md tactical-card rounded-lg p-6 relative z-10">
-        <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold uppercase tracking-widest text-white mb-2">Free Fire <span class="text-orange-500">Clash</span></h1>
-            <p class="tech-font text-xs text-gray-400 uppercase tracking-widest">Select Your Battle Mode</p>
+        <div class="text-center mb-8">
+            <div class="flex justify-center items-center gap-2 mb-1">
+                <svg class="w-10 h-10 text-orange-500 drop-shadow-[0_0_10px_rgba(234,88,12,0.8)]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.66 11.2c-.23-.3-.51-.56-.77-.82-.67-.6-1.43-1.03-2.07-1.66C13.33 7.26 13 4.85 13.95 3c-.95.23-1.78.75-2.49 1.32-2.59 2.08-3.61 5.75-2.39 8.9.04.1.08.2.08.33 0 .22-.15.42-.35.5-.22.1-.46.04-.64-.12a.83.83 0 01-.15-.17c-1.1-1.43-1.28-3.48-.53-5.12C5.89 10 5 12.3 5.14 14.47c.04.53.15 1.06.36 1.55.2.48.47.91.81 1.28.34.37.73.68 1.16.93.43.25.9.42 1.38.51.49.1.99.1 1.48.01.49-.09.97-.26 1.42-.49.45-.23.86-.53 1.22-.88.36-.35.67-.76.91-1.21.25-.45.43-.93.54-1.42.11-.5.15-1.02.11-1.53-.04-.51-.17-1.01-.38-1.48-.21-.47-.49-.9-.83-1.28z"></path>
+                </svg>
+                <h1 class="text-3xl font-bold uppercase tracking-widest text-white drop-shadow-md">SECTOR 7</h1>
+            </div>
+            <h2 class="text-xl font-bold text-yellow-500 tracking-[0.2em] mb-2">E S P O R T S</h2>
+            <div class="w-full bg-gray-800 h-px my-3"></div>
+            <p class="tech-font text-[10px] text-orange-400 mt-1 uppercase tracking-[0.3em]">Tactical Recruitment Protocol</p>
         </div>
 
-        <!-- MODE SELECTION BUTTONS -->
-        <div class="grid grid-cols-3 gap-2 mb-6 text-center tech-font text-xs">
-            <div id="btn1v1" class="mode-btn active p-2 rounded" onclick="selectMode('1v1')">
-                <p class="text-white font-bold text-lg">1v1</p>
-                <p class="text-orange-500">₦2,000</p>
-            </div>
-            <div id="btnDuo" class="mode-btn p-2 rounded" onclick="selectMode('Duo')">
-                <p class="text-white font-bold text-lg">Duo</p>
-                <p class="text-orange-500">₦4,000</p>
-            </div>
-            <div id="btnSquad" class="mode-btn p-2 rounded" onclick="selectMode('Squad')">
-                <p class="text-white font-bold text-lg">Squad</p>
-                <p class="text-orange-500">₦5,000</p>
-            </div>
-        </div>
-
-        <!-- DYNAMIC PRICE & PRIZE -->
-        <div class="flex justify-between bg-black/50 p-4 rounded border border-gray-800 mb-4">
-            <div class="text-center w-1/2 border-r border-gray-800">
-                <p class="tech-font text-gray-500 text-[10px] mb-1 uppercase">Entry Fee</p>
-                <p id="displayFee" class="text-xl font-bold text-white">₦2,000</p>
-            </div>
-            <div class="text-center w-1/2">
-                <p class="tech-font text-gray-500 text-[10px] mb-1 uppercase">Grand Prize</p>
-                <p id="displayPrize" class="text-xl font-bold text-green-400">₦30,000</p>
-            </div>
-        </div>
-
-        <!-- DYNAMIC TOURNAMENT SETUP BOX -->
-        <div class="bg-black/40 border border-gray-800 p-4 rounded mb-6 tech-font text-xs text-gray-400 space-y-2">
-            <p class="text-orange-500 font-bold uppercase tracking-wider mb-2 text-[10px]">Tournament Setup:</p>
-            <p class="flex justify-between"><span>Mode:</span> <span id="setupMode" class="text-white">1v1 Custom Room</span></p>
-            <p class="flex justify-between"><span>Max Players:</span> <span id="setupSlots" class="text-white">16 Slots Only</span></p>
-            <p class="flex justify-between"><span>Runner Up:</span> <span id="setupRunnerUp" class="text-white">₦10,000</span></p>
-            <p class="flex justify-between"><span>Platform:</span> <span class="text-white">Mobile Only</span></p>
-        </div>
-
-        <button onclick="showStep(2)" class="premium-btn w-full font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">
-            Initiate Recruitment
-        </button>
-    </div>
-
-    <!-- STEP 2: INTEL FORM -->
-    <div id="step2" class="hidden w-full max-w-md tactical-card rounded-lg p-6 relative z-10">
-        <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-800 pb-2">Agent Intel Form</h2>
-        
-        <div class="space-y-4 text-sm font-sans">
+        <div class="space-y-4">
             <div>
-                <label class="tech-font block text-orange-500 text-xs mb-1">Agent Name</label>
-                <input type="text" id="agentName" class="w-full bg-black/60 border border-gray-600 rounded p-2 text-white focus:outline-none focus:border-orange-500" placeholder="John Doe">
+                <label class="tech-font block text-gray-400 text-xs mb-1 uppercase tracking-widest">Free Fire Email</label>
+                <input type="email" id="email" class="w-full bg-black/60 border border-gray-600 rounded p-3 text-white focus:outline-none focus:border-orange-500 transition-all font-sans" placeholder="agent@ff.com">
             </div>
             <div>
-                <label class="tech-font block text-orange-500 text-xs mb-1">Free Fire UID</label>
-                <input type="text" id="ffId" class="w-full bg-black/60 border border-gray-600 rounded p-2 text-white focus:outline-none focus:border-orange-500" placeholder="e.g. 123456789">
-            </div>
-            <div>
-                <label class="tech-font block text-orange-500 text-xs mb-1">In-Game Name (IGN)</label>
-                <input type="text" id="ffIgn" class="w-full bg-black/60 border border-gray-600 rounded p-2 text-white focus:outline-none focus:border-orange-500" placeholder="ProSniper99">
-            </div>
-            
-            <div>
-                <label class="tech-font block text-orange-500 text-xs mb-1">Profile Screenshot</label>
-                <div class="file-upload-wrapper">
-                    <button class="w-full bg-black/40 border border-gray-600 border-dashed rounded p-3 text-gray-400 text-left">
-                        📁 Tap to upload screenshot...
-                    </button>
-                    <input type="file" id="profilePic" accept="image/*" onchange="previewImage(event)">
-                </div>
-                <div id="previewContainer" class="hidden mt-2 text-center">
-                    <img id="imagePreview" src="" alt="Preview" class="w-20 h-20 object-cover mx-auto rounded border border-orange-500">
-                </div>
+                <label class="tech-font block text-gray-400 text-xs mb-1 uppercase tracking-widest">Access Password</label>
+                <input type="password" id="password" class="w-full bg-black/60 border border-gray-600 rounded p-3 text-white focus:outline-none focus:border-orange-500 transition-all font-sans" placeholder="Min 6 characters">
             </div>
         </div>
 
-        <button onclick="startScanning()" class="premium-btn w-full mt-6 font-bold py-3 rounded uppercase tracking-widest text-md shadow-lg">
-            Submit For Verification
+        <button id="authBtn" onclick="handleAuth()" class="premium-btn w-full mt-8 font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">
+            Register Account
         </button>
-    </div>
 
-    <!-- STEP 3: SCANNING -->
-    <div id="step3" class="hidden w-full max-w-md tactical-card rounded-lg p-10 text-center relative z-10">
-        <div class="spinner mb-6"></div>
-        <h2 class="text-lg font-bold text-white mb-2 uppercase tracking-widest">Scanning Tencent Servers</h2>
-        <p class="tech-font text-orange-500 text-xs animate-pulse">Fetching UID: <span id="displayFfId"></span></p>
-        <p class="tech-font text-orange-500 text-xs animate-pulse mt-1">Validating IGN: <span id="displayIgn"></span></p>
-    </div>
-
-    <!-- STEP 4: OPAY PAYMENT & RECEIPT -->
-    <div id="step4" class="hidden w-full max-w-md tactical-card rounded-lg p-6 relative z-10">
-        <h2 class="text-xl font-bold text-green-400 mb-4 text-center tech-font">PROFILE VERIFIED ✅</h2>
+        <p class="tech-font text-center text-xs text-gray-400 mt-6 cursor-pointer hover:text-yellow-500 transition-colors uppercase" onclick="toggleMode()">
+            <span id="modeText">Already registered? Login here.</span>
+        </p>
         
-        <div class="bg-black/60 border border-orange-500 p-4 rounded mb-4 text-center">
-            <p class="tech-font text-gray-400 text-xs mb-2 uppercase">Transfer Clearance Fee (<span id="payFeeDisplay">₦2,000</span>)</p>
-            <p class="tech-font text-gray-400 text-xs mb-1">Opay Account Number:</p>
-            <p class="text-2xl font-bold text-white tracking-widest">9072489087</p>
-            <p class="tech-font text-gray-500 text-[10px] mt-2">(Name: Sector 7 Esports)</p>
-        </div>
-
-        <div class="mb-6">
-            <label class="tech-font block text-orange-500 text-xs mb-1">Upload Payment Receipt</label>
-            <div class="file-upload-wrapper">
-                <button class="w-full bg-black/40 border border-gray-600 border-dashed rounded p-3 text-gray-400 text-left">
-                    📁 Tap to upload receipt...
-                </button>
-                <input type="file" id="receiptPic" accept="image/*" onchange="previewReceipt(event)">
-            </div>
-            <div id="receiptPreviewContainer" class="hidden mt-2 text-center">
-                <img id="receiptPreview" src="" alt="Receipt Preview" class="w-20 h-20 object-cover mx-auto rounded border border-green-500">
-            </div>
-        </div>
-
-        <button onclick="generateBriefing()" class="premium-btn w-full font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">
-            I Have Paid <span id="payBtnFee">₦2,000</span>
-        </button>
+        <p id="errorMsg" class="tech-font text-center text-red-500 text-xs mt-4 font-bold hidden bg-red-900/20 p-2 rounded border border-red-900"></p>
+        <p id="successMsg" class="tech-font text-center text-green-400 text-xs mt-4 font-bold hidden bg-green-900/20 p-2 rounded border border-green-900"></p>
     </div>
 
-    <!-- STEP 5: OFFICER REDIRECT -->
-    <div id="step5" class="hidden w-full max-w-md tactical-card rounded-lg p-6 relative z-10 border-2 border-orange-500">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold text-white uppercase tracking-widest border-b border-gray-800 pb-2">Access Granted</h2>
-        </div>
-        
-        <div class="bg-black/80 border border-gray-800 p-4 rounded mb-6 tech-font text-sm leading-relaxed">
-            <p class="text-orange-500 mb-2">> INITIATING BRIEFING...</p>
-            <p class="text-white mb-4">AGENT: <span id="briefName"></span></p>
-            <p class="text-white mb-4">MODE: <span id="briefMode" class="text-orange-500 font-bold"></span></p>
-            <p class="text-white mb-4">STATUS: <span class="text-yellow-400">BADGE <span id="badgeSector"></span></span></p>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmu8zINhqaI7F-hH5gDeRC51oClBEnJ9A",
+            authDomain: "sector-7-esports.firebaseapp.com",
+            projectId: "sector-7-esports",
+            storageBucket: "sector-7-esports.firebasestorage.app",
+            messagingSenderId: "268248649597",
+            appId: "1:268248649597:web:5d6dc3288bd474ef080614"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let isLoginMode = false;
+        const authBtn = document.getElementById('authBtn');
+        const modeText = document.getElementById('modeText');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+
+        // IF ALREADY LOGGED IN, GO TO TOURNAMENT PAGE
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = "tournament.html"; 
+            }
+        });
+
+        window.toggleMode = function() {
+            isLoginMode = !isLoginMode;
+            authBtn.innerText = isLoginMode ? "LOGIN TO PORTAL" : "REGISTER ACCOUNT";
+            modeText.innerText = isLoginMode ? "Need an account? Register here." : "Already registered? Login here.";
+            errorMsg.classList.add('hidden');
+            successMsg.classList.add('hidden');
+        }
+
+        window.handleAuth = async function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             
-            <hr class="border-gray-800 my-4">
-            
-            <p class="text-orange-500 mb-1">OFFICER CONTACT:</p>
-            <p class="text-2xl font-bold text-white tracking-widest">+234 816 389 3071</p>
-            <p class="text-red-400 mt-3 text-[10px] font-bold animate-pulse">⚠️ IMPORTANT: Attach your receipt and profile screenshot in the WhatsApp chat. The Officer will verify and send your lobby link.</p>
-        </div>
+            errorMsg.classList.add('hidden');
+            successMsg.classList.add('hidden');
 
-        <a id="whatsappLink" href="#" target="_blank" class="block w-full text-center premium-btn font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">
-            Message Officer Now
-        </a>
-    </div>
-
-    <!-- SCRIPT -->
-    <script>
-        const RECRUITER_PHONE = "2348163893071"; 
-        const ADMIN_PASSWORD = "Regent2011";
-
-        let userData = {};
-        let uploadedImageBase64 = "";
-        let uploadedReceiptBase64 = "";
-        
-        let currentMode = "1v1";
-        let currentFee = 2000;
-
-        function selectMode(mode) {
-            currentMode = mode;
-            
-            document.getElementById('btn1v1').classList.remove('active');
-            document.getElementById('btnDuo').classList.remove('active');
-            document.getElementById('btnSquad').classList.remove('active');
-
-            if(mode === '1v1') {
-                document.getElementById('btn1v1').classList.add('active');
-                currentFee = 2000;
-                document.getElementById('displayFee').innerText = "₦2,000";
-                document.getElementById('displayPrize').innerText = "₦30,000";
-                document.getElementById('setupMode').innerText = "1v1 Custom Room";
-                document.getElementById('setupSlots').innerText = "16 Slots Only";
-                document.getElementById('setupRunnerUp').innerText = "₦10,000";
-            } 
-            else if(mode === 'Duo') {
-                document.getElementById('btnDuo').classList.add('active');
-                currentFee = 4000;
-                document.getElementById('displayFee').innerText = "₦4,000";
-                document.getElementById('displayPrize').innerText = "₦50,000";
-                document.getElementById('setupMode').innerText = "Duo Custom Room";
-                document.getElementById('setupSlots').innerText = "32 Players (16 Teams)";
-                document.getElementById('setupRunnerUp').innerText = "₦20,000";
-            } 
-            else if(mode === 'Squad') {
-                document.getElementById('btnSquad').classList.add('active');
-                currentFee = 5000;
-                document.getElementById('displayFee').innerText = "₦5,000";
-                document.getElementById('displayPrize').innerText = "₦70,000";
-                document.getElementById('setupMode').innerText = "Squad Custom Room";
-                document.getElementById('setupSlots').innerText = "48 Players (12 Teams)";
-                document.getElementById('setupRunnerUp').innerText = "₦30,000";
-            }
-        }
-
-        function showAdminLogin() {
-            document.getElementById('adminLoginScreen').classList.remove('hidden');
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('adminError').classList.add('hidden');
-        }
-
-        function closeAdminLogin() {
-            document.getElementById('adminLoginScreen').classList.add('hidden');
-        }
-
-        function checkAdminPassword() {
-            const enteredPass = document.getElementById('adminPasswordInput').value;
-            if (enteredPass === ADMIN_PASSWORD) {
-                window.location.href = "admin.html";
-            } else {
-                document.getElementById('adminError').classList.remove('hidden');
-                document.getElementById('adminPasswordInput').value = '';
-            }
-        }
-
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('imagePreview').src = e.target.result;
-                    document.getElementById('previewContainer').classList.remove('hidden');
-                    uploadedImageBase64 = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function previewReceipt(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('receiptPreview').src = e.target.result;
-                    document.getElementById('receiptPreviewContainer').classList.remove('hidden');
-                    uploadedReceiptBase64 = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function showStep(step) {
-            for(let i=1; i<=5; i++) {
-                document.getElementById('step'+i).classList.add('hidden');
-            }
-            document.getElementById('step'+step).classList.remove('hidden');
-        }
-
-        function startScanning() {
-            const name = document.getElementById('agentName').value.trim();
-            const ffId = document.getElementById('ffId').value.trim();
-            const ign = document.getElementById('ffIgn').value.trim();
-
-            if (!name || !ffId || !ign) {
-                alert("Please fill all text fields.");
-                return;
-            }
-            if (!uploadedImageBase64) {
-                alert("Please upload your profile screenshot.");
+            if(!email || password.length < 6) {
+                showError("Please enter a valid email and a password with at least 6 characters.");
                 return;
             }
 
-            userData = { name, ffId, ign, mode: currentMode, fee: currentFee };
+            authBtn.innerText = "PROCESSING...";
+            authBtn.disabled = true;
 
-            document.getElementById('displayFfId').innerText = ffId;
-            document.getElementById('displayIgn').innerText = ign;
-            
-            document.getElementById('payFeeDisplay').innerText = `₦${currentFee.toLocaleString()}`;
-            document.getElementById('payBtnFee').innerText = `₦${currentFee.toLocaleString()}`;
-            
-            showStep(3);
+            try {
+                if (isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    await setDoc(doc(db, "users", user.uid), {
+                        email: email,
+                        joinedAt: new Date().toISOString(),
+                        status: "Registered",
+                        paymentStatus: "Unpaid"
+                    });
 
-            setTimeout(() => {
-                showStep(4);
-            }, 3000);
-        }
-
-        function generateBriefing() {
-            if (!uploadedReceiptBase64) {
-                alert("Please upload your payment receipt before proceeding.");
-                return;
+                    showSuccess("Registration Successful! Redirecting to Tournament...");
+                }
+            } catch (error) {
+                authBtn.innerText = isLoginMode ? "LOGIN TO PORTAL" : "REGISTER ACCOUNT";
+                authBtn.disabled = false;
+                
+                let cleanError = error.message.replace("Firebase: ", "");
+                if (cleanError.includes("auth/email-already-in-use")) cleanError = "This Email is already registered.";
+                if (cleanError.includes("auth/invalid-credential")) cleanError = "Invalid Email or Password.";
+                if (cleanError.includes("auth/weak-password")) cleanError = "Password is too weak.";
+                
+                showError(cleanError);
             }
-
-            const randomSector = Math.floor(Math.random() * 900) + 100;
-            
-            document.getElementById('briefName').innerText = userData.name.toUpperCase();
-            document.getElementById('briefMode').innerText = userData.mode.toUpperCase();
-            document.getElementById('badgeSector').innerText = `SECTOR ${randomSector}`;
-
-            const waMessage = encodeURIComponent(`Hello Officer, I am Agent ${userData.name}. My Badge is Sector ${randomSector}. I am registering for the ${userData.mode} tournament. My FF ID is ${userData.ffId} (${userData.ign}). I have paid the ₦${userData.fee} access fee to Opay. I am attaching my payment receipt and profile screenshot now. Please verify and send my lobby link.`);
-            
-            document.getElementById('whatsappLink').href = `https://wa.me/${RECRUITER_PHONE}?text=${waMessage}`;
-            
-            showStep(5);
         }
+
+        function showError(msg) { errorMsg.innerText = `[ERROR] ${msg}`; errorMsg.classList.remove('hidden'); }
+        function showSuccess(msg) { successMsg.innerText = `[SUCCESS] ${msg}`; successMsg.classList.remove('hidden'); }
     </script>
 </body>
 </html>
