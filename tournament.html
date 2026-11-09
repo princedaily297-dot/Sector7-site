@@ -21,6 +21,10 @@
         .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
         .mode-btn { border: 1px solid #555; background: rgba(0,0,0,0.5); transition: all 0.2s; cursor: pointer; }
         .mode-btn.active { border: 2px solid #ea580c; background: rgba(234, 88, 12, 0.2); box-shadow: 0 0 10px rgba(234, 88, 12, 0.5); }
+        
+        .live-dot { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -45,6 +49,15 @@
 
     <!-- STEP 1: MAIN LANDING -->
     <div id="step1" class="w-full max-w-md tactical-card rounded-lg p-6 relative z-10">
+        
+        <!-- LIVE BADGE -->
+        <div class="flex justify-center mb-4">
+            <div class="flex items-center gap-2 bg-red-900/30 border border-red-800 px-3 py-1 rounded-full">
+                <span class="live-dot"></span>
+                <span class="tech-font text-[10px] text-red-400 font-bold uppercase tracking-wider">Live Tournaments Active</span>
+            </div>
+        </div>
+
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold uppercase tracking-widest text-white mb-2">Free Fire <span class="text-orange-500">Clash</span></h1>
             <p class="tech-font text-xs text-gray-400 uppercase tracking-widest">Select Your Battle Mode</p>
@@ -61,12 +74,45 @@
             <div class="text-center w-1/2"><p class="tech-font text-gray-500 text-[10px] mb-1 uppercase">Grand Prize</p><p id="displayPrize" class="text-xl font-bold text-green-400">₦30,000</p></div>
         </div>
 
-        <div class="bg-black/40 border border-gray-800 p-4 rounded mb-6 tech-font text-xs text-gray-400 space-y-2">
+        <div class="bg-black/40 border border-gray-800 p-4 rounded mb-4 tech-font text-xs text-gray-400 space-y-2">
             <p class="text-orange-500 font-bold uppercase tracking-wider mb-2 text-[10px]">Tournament Setup:</p>
             <p class="flex justify-between"><span>Mode:</span> <span id="setupMode" class="text-white">1v1 Custom Room</span></p>
             <p class="flex justify-between"><span>Max Players:</span> <span id="setupSlots" class="text-white">16 Slots Only</span></p>
             <p class="flex justify-between"><span>Runner Up:</span> <span id="setupRunnerUp" class="text-white">₦10,000</span></p>
             <p class="flex justify-between"><span>Platform:</span> <span class="text-white">Mobile Only</span></p>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <div class="bg-[#111] border border-gray-800 p-3 rounded mb-4">
+            <p class="tech-font text-[10px] text-gray-500 mb-2 uppercase text-center tracking-widest">Recent Champions</p>
+            <div class="flex justify-between items-center text-xs tech-font border-b border-gray-800 pb-1 mb-1">
+                <span class="text-yellow-500">🏆 LYON.Gamezking</span>
+                <span class="text-green-400">₦30,000</span>
+            </div>
+            <div class="flex justify-between items-center text-xs tech-font border-b border-gray-800 pb-1 mb-1">
+                <span class="text-gray-300">🥈 Secret.PLS1</span>
+                <span class="text-gray-400">₦10,000</span>
+            </div>
+            <div class="flex justify-between items-center text-xs tech-font">
+                <span class="text-orange-400">🥉 ShadowFF</span>
+                <span class="text-gray-500">₦5,000</span>
+            </div>
+        </div>
+
+        <!-- UPCOMING EVENT & SHIPPING SURPRISE -->
+        <div class="bg-black/60 border-l-2 border-orange-500 p-3 rounded mb-4">
+            <p class="tech-font text-[10px] text-orange-400 font-bold uppercase mb-1">Upcoming Sector 7 eSports Event</p>
+            <p class="text-xs text-gray-300 font-sans mb-2">Recruits are currently engaging with their Recruit Officers for the matches about to begin.</p>
+            <p class="tech-font text-[10px] text-yellow-500 font-bold">🎁 SURPRISE: The Best Solo, Duo, and Squad will receive a special physical package shipped directly to their location.</p>
+        </div>
+
+        <!-- FF LORE & NEWS -->
+        <div class="bg-black/40 border border-gray-800 p-3 rounded mb-6">
+            <p class="tech-font text-[10px] text-gray-400 font-bold uppercase mb-1">FF Intel & Updates</p>
+            <p class="text-[11px] text-gray-400 font-sans leading-relaxed">
+                <span class="text-white">Lore:</span> The world is controlled by the <span class="text-orange-400">Horizon Corporation</span>, forcing elite fighters into genetic experiments on Bermuda [citation:12]. 
+                <br><span class="text-white mt-1 block">OB49 Update:</span> The new <span class="text-green-400">Solara Map</span> is live! Use the new Slide Rails to outmaneuver enemies in high-tech compounds [citation:3].
+            </p>
         </div>
 
         <button onclick="showStep(2)" class="premium-btn w-full font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">Initiate Recruitment</button>
@@ -148,15 +194,11 @@
         const auth = getAuth(app);
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "index.html"; // Kick to login if not authenticated
-            }
+            if (!user) { window.location.href = "index.html"; }
         });
 
         window.logout = function() {
-            signOut(auth).then(() => {
-                window.location.href = "index.html";
-            });
+            signOut(auth).then(() => { window.location.href = "index.html"; });
         }
     </script>
 
@@ -183,30 +225,4 @@
         function previewImage(event) { const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { document.getElementById('imagePreview').src = e.target.result; document.getElementById('previewContainer').classList.remove('hidden'); uploadedImageBase64 = e.target.result; }; reader.readAsDataURL(file); } }
         function previewReceipt(event) { const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { document.getElementById('receiptPreview').src = e.target.result; document.getElementById('receiptPreviewContainer').classList.remove('hidden'); uploadedReceiptBase64 = e.target.result; }; reader.readAsDataURL(file); } }
 
-        function showStep(step) { for(let i=1; i<=5; i++) { document.getElementById('step'+i).classList.add('hidden'); } document.getElementById('step'+step).classList.remove('hidden'); }
-
-        function startScanning() {
-            const name = document.getElementById('agentName').value.trim(); const ffId = document.getElementById('ffId').value.trim(); const ign = document.getElementById('ffIgn').value.trim();
-            if (!name || !ffId || !ign) { alert("Please fill all text fields."); return; } if (!uploadedImageBase64) { alert("Please upload your profile screenshot."); return; }
-            userData = { name, ffId, ign, mode: currentMode, fee: currentFee };
-            document.getElementById('displayFfId').innerText = ffId; document.getElementById('displayIgn').innerText = ign;
-            document.getElementById('payFeeDisplay').innerText = `₦${currentFee.toLocaleString()}`; document.getElementById('payBtnFee').innerText = `₦${currentFee.toLocaleString()}`;
-            showStep(3);
-            setTimeout(() => { showStep(4); }, 3000);
-        }
-
-        function generateBriefing() {
-            if (!uploadedReceiptBase64) { alert("Please upload your payment receipt before proceeding."); return; }
-            const randomSector = Math.floor(Math.random() * 900) + 100;
-            document.getElementById('briefName').innerText = userData.name.toUpperCase(); 
-            document.getElementById('briefMode').innerText = userData.mode.toUpperCase(); 
-            document.getElementById('badgeSector').innerText = `SECTOR ${randomSector}`;
-            
-            const waMessage = encodeURIComponent(`Hello Officer, I am Agent ${userData.name}. My Badge is Sector ${randomSector}. I am registering for the ${userData.mode} tournament. My FF ID is ${userData.ffId} (${userData.ign}). I have paid the ₦${userData.fee} access fee to Opay. I am attaching my payment receipt and profile screenshot now. Please verify and send my lobby link.`);
-            document.getElementById('whatsappLink').href = `https://wa.me/${RECRUITER_PHONE}?text=${waMessage}`;
-            
-            showStep(5);
-        }
-    </script>
-</body>
-</html>
+        function showStep(step) { for(let i=1; i<=5; i++
