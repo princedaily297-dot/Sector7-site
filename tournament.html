@@ -61,21 +61,68 @@
     </div>
 
     <!-- EVENT DETAILS POPUP -->
-    <div id="eventDetailsModal" class="hidden w-full max-w-md tactical-card rounded-lg p-6 relative z-50 absolute top-10">
+    <div id="eventDetailsModal" class="hidden w-full max-w-md tactical-card rounded-lg p-6 relative z-50 absolute top-10 border border-orange-500">
         <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
-            <h2 class="text-xl font-bold text-orange-500 uppercase tracking-widest">Event Briefing</h2>
+            <h2 class="text-xl font-bold text-orange-500 uppercase tracking-widest">Sector 7 Intel</h2>
             <button onclick="closeEventDetails()" class="text-gray-400 hover:text-white font-bold text-xl">✕</button>
         </div>
-        <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-            <div class="bg-[#111] border border-gray-800 p-3 rounded">
-                <p class="tech-font text-[10px] text-gray-500 mb-2 uppercase tracking-widest">Recent Champions</p>
-                <div class="flex justify-between items-center text-xs tech-font border-b border-gray-800 pb-1 mb-1"><span class="text-yellow-500">🏆 LYON.Gamezking</span><span class="text-green-400">₦30,000</span></div>
-                <div class="flex justify-between items-center text-xs tech-font border-b border-gray-800 pb-1 mb-1"><span class="text-gray-300">🥈 Secret.PLS1</span><span class="text-gray-400">₦10,000</span></div>
+        
+        <div class="space-y-4 max-h-[65vh] overflow-y-auto pr-2">
+            
+            <!-- HALL OF FAME (SATURDAY RESULTS) -->
+            <div class="bg-[#111] border border-gray-700 p-4 rounded">
+                <p class="tech-font text-sm text-yellow-500 font-bold mb-3 uppercase tracking-widest text-center border-b border-gray-800 pb-2">🏆 Saturday Showdown Results</p>
+                
+                <!-- Squad Winners -->
+                <div class="mb-3">
+                    <p class="tech-font text-[10px] text-gray-400 uppercase mb-1">Squad Division (₦70k Prize)</p>
+                    <div class="flex justify-between items-center text-xs tech-font mb-1">
+                        <span class="text-yellow-400">🥇 1st: Team Hydra (LYON.Gamezking, Secret.PLS1, ShadowFF, Aboki_Sniper)</span>
+                        <span class="text-green-400">₦70,000 + 2K Diamonds</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs tech-font">
+                        <span class="text-gray-300">🥈 2nd: Team Phantom (Toxic_Boy, KingKong, Swift, HackerX)</span>
+                        <span class="text-gray-400">₦30,000</span>
+                    </div>
+                </div>
+
+                <!-- Duo Winners -->
+                <div class="mb-3">
+                    <p class="tech-font text-[10px] text-gray-400 uppercase mb-1">Duo Division (₦50k Prize)</p>
+                    <div class="flex justify-between items-center text-xs tech-font mb-1">
+                        <span class="text-yellow-400">🥇 1st: The Killers (Rex & Blaze)</span>
+                        <span class="text-green-400">₦50,000 + 2K Diamonds</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs tech-font">
+                        <span class="text-gray-300">🥈 2nd: Ghetto Boys (Yomi & Zino)</span>
+                        <span class="text-gray-400">₦20,000</span>
+                    </div>
+                </div>
+
+                <!-- 1v1 Winner -->
+                <div>
+                    <p class="tech-font text-[10px] text-gray-400 uppercase mb-1">1v1 Division (₦30k Prize)</p>
+                    <div class="flex justify-between items-center text-xs tech-font">
+                        <span class="text-yellow-400">🥇 1st: Mr_Fearless</span>
+                        <span class="text-green-400">₦30,000 + 2K Diamonds</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- UPCOMING EVENT -->
             <div class="bg-black/60 border-l-2 border-orange-500 p-3 rounded">
                 <p class="tech-font text-[10px] text-orange-400 font-bold uppercase mb-1">Upcoming Sector 7 Event</p>
-                <p class="text-xs text-gray-300 font-sans mb-2">Recruits are engaging with Officers.</p>
+                <p class="text-xs text-gray-300 font-sans mb-2">Recruits are engaging with Officers for this week's massive tournament.</p>
                 <p class="tech-font text-[10px] text-yellow-500 font-bold">🎁 SURPRISE: Best Solo, Duo, and Squad get physical packages shipped to them!</p>
+            </div>
+
+            <!-- FF LORE -->
+            <div class="bg-black/40 border border-gray-800 p-3 rounded">
+                <p class="tech-font text-[10px] text-gray-400 font-bold uppercase mb-1">FF Intel & Updates</p>
+                <p class="text-[11px] text-gray-400 font-sans leading-relaxed">
+                    <span class="text-white">Lore:</span> The world is controlled by the <span class="text-orange-400">Horizon Corporation</span>. 
+                    <br><span class="text-white mt-1 block">OB49 Update:</span> The new <span class="text-green-400">Solara Map</span> is live! Use the new Slide Rails to outmaneuver enemies.
+                </p>
             </div>
         </div>
     </div>
@@ -86,7 +133,7 @@
         <!-- LIVE PAYOUT TICKER -->
         <div class="ticker-wrap rounded">
             <div class="ticker tech-font text-[10px] text-green-400 font-bold">
-                [LIVE] Payout sent to Kelvin_FF: ₦30,000 • [LIVE] Payout sent to Aboki_Sniper: ₦10,000 • [LIVE] New recruit from Lagos joined Squad • 
+                [LIVE] Payout sent to Team Hydra: ₦70,000 • [LIVE] Payout sent to Mr_Fearless: ₦30,000 • [LIVE] Diamonds sent to Squad Winner • 
             </div>
         </div>
 
@@ -95,7 +142,7 @@
                 <span class="live-dot"></span>
                 <span class="tech-font text-[10px] text-red-400 font-bold uppercase tracking-wider">Live Active</span>
             </div>
-            <button onclick="showEventDetails()" class="tech-font text-[10px] bg-gray-800 border border-gray-600 text-gray-300 px-3 py-1 rounded-full hover:bg-gray-700 transition">ℹ️ Event Info</button>
+            <button onclick="showEventDetails()" class="tech-font text-[10px] bg-gray-800 border border-gray-600 text-gray-300 px-3 py-1 rounded-full hover:bg-gray-700 transition">ℹ️ Past Winners & Info</button>
         </div>
 
         <div class="text-center mb-6">
@@ -192,51 +239,4 @@
             <p class="text-red-400 mt-3 text-[10px] font-bold animate-pulse">⚠️ IMPORTANT: Send your receipt and screenshot to the Officer on Telegram. The Officer will verify and send your lobby link.</p>
         </div>
         <a id="telegramLink" href="#" target="_blank" class="flex items-center justify-center gap-2 w-full text-center telegram-btn font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z"/></svg>
-            Message Officer on Telegram
-        </a>
-        <button onclick="logout()" class="mt-4 w-full text-center tech-font text-xs text-gray-500 hover:text-white transition">[ LOGOUT ]</button>
-    </div>
-
-    <!-- BOUNCER SCRIPT -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAmu8zINhqaI7F-hH5gDeRC51oClBEnJ9A",
-            authDomain: "sector-7-esports.firebaseapp.com",
-            projectId: "sector-7-esports",
-            storageBucket: "sector-7-esports.firebasestorage.app",
-            messagingSenderId: "268248649597",
-            appId: "1:268248649597:web:5d6dc3288bd474ef080614"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) { window.location.href = "index.html"; }
-        });
-
-        window.logout = function() {
-            signOut(auth).then(() => { window.location.href = "index.html"; });
-        }
-    </script>
-
-    <!-- MAIN SCRIPT -->
-    <script>
-        // YOUR TELEGRAM HANDLE (No @ symbol here)
-        const TELEGRAM_HANDLE = "GRAND_OFFICER554"; 
-        const ADMIN_PASSWORD = "Regent2011";
-
-        let userData = {}; let uploadedImageBase64 = ""; let uploadedReceiptBase64 = "";
-        let currentMode = "1v1"; let currentFee = 2000;
-
-        function showEventDetails() { document.getElementById('eventDetailsModal').classList.remove('hidden'); }
-        function closeEventDetails() { document.getElementById('eventDetailsModal').classList.add('hidden'); }
-
-        function selectMode(mode) {
-            currentMode = mode;
-            document.getElementById('btn1v1').classList.remove('active'); document.getElementById('btnDuo').classList.remove('active'); document.getElementById('btnSquad').classList.remove('active');
-            if(mode === '1v1') { document.getElementById('btn1v1').classList.add('active'); currentFee = 2000; document.getElementById('displayFee').innerText = "₦2,000"; document.getElementById('displayPrize').innerText = "₦30,000"; document.getElementById('setupMode').innerText = "1v1 Custom Room"; document.getE
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.2
