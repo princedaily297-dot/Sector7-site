@@ -14,17 +14,13 @@
         .premium-btn { background: linear-gradient(90deg, #ea580c 0%, #eab308 100%); color: #000; transition: all 0.3s ease; text-shadow: 0px 0px 2px rgba(255,255,255,0.5); }
         .telegram-btn { background: linear-gradient(90deg, #0088cc 0%, #005f8f 100%); color: #fff; transition: all 0.3s ease; }
         .neon-border { border: 2px solid #ea580c; box-shadow: 0 0 15px #ea580c, inset 0 0 15px #ea580c; }
-        
         .mode-btn { border: 1px solid #555; background: rgba(0,0,0,0.5); transition: all 0.2s; cursor: pointer; padding: 12px 8px; width: 100%; outline: none; -webkit-tap-highlight-color: transparent; }
         .mode-btn.active { border: 2px solid #ea580c; background: rgba(234, 88, 12, 0.2); box-shadow: 0 0 10px rgba(234, 88, 12, 0.5); }
-        
         .live-dot { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        
         .ticker-wrap { width: 100%; overflow: hidden; background-color: rgba(234, 88, 12, 0.1); border-bottom: 1px solid #ea580c; padding: 4px 0; margin-bottom: 15px; }
         .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 15s linear infinite; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        
         .hidden { display: none !important; }
     </style>
 </head>
@@ -159,13 +155,15 @@
         <p class="tech-font text-gray-500 text-[9px] mt-2 text-left" id="scanLog">> Initializing connection...</p>
     </div>
 
-    <!-- STEP 4: PAYMENT -->
+    <!-- STEP 4: PAYMENT (UPDATED TO UBA) -->
     <div id="step4" class="hidden w-full max-w-md tactical-card rounded-lg p-6 relative z-10 mt-10">
         <h2 class="text-xl font-bold text-green-400 mb-4 text-center tech-font">PROFILE VERIFIED ✅</h2>
         <div class="bg-black/60 border border-orange-500 p-4 rounded mb-4 text-center">
             <p class="tech-font text-gray-400 text-xs mb-2 uppercase">Transfer Fee (<span id="payFeeDisplay">₦2,000</span>)</p>
-            <p class="text-2xl font-bold text-white tracking-widest">9072489087</p>
-            <p class="tech-font text-gray-500 text-[10px] mt-2">(Name: Sector 7 Esports)</p>
+            <!-- UBA ACCOUNT DETAILS -->
+            <p class="text-2xl font-bold text-white tracking-widest">2354827869</p>
+            <p class="tech-font text-orange-500 font-bold text-sm mt-1">Bank: UBA</p>
+            <p class="tech-font text-gray-500 text-[10px] mt-1">(Name: Kennedy Obanor)</p>
         </div>
         <div class="mb-6">
             <label class="tech-font block text-orange-500 text-xs mb-1">Upload Receipt</label>
@@ -213,7 +211,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // BOUNCER: Kicks them to login if not signed in
         onAuthStateChanged(auth, (user) => {
             if (!user) { window.location.href = "index.html"; }
         });
@@ -242,76 +239,4 @@
             
             if(mode === '1v1') { document.getElementById('btn1v1').classList.add('active'); currentFee = 2000; document.getElementById('displayFee').innerText = "₦2,000"; document.getElementById('displayPrize').innerText = "₦30,000"; document.getElementById('setupMode').innerText = "1v1 Custom Room"; document.getElementById('setupSlots').innerText = "16 Slots Only"; document.getElementById('setupRunnerUp').innerText = "₦10,000"; } 
             else if(mode === 'Duo') { document.getElementById('btnDuo').classList.add('active'); currentFee = 4000; document.getElementById('displayFee').innerText = "₦4,000"; document.getElementById('displayPrize').innerText = "₦50,000"; document.getElementById('setupMode').innerText = "Duo Custom Room"; document.getElementById('setupSlots').innerText = "32 Players"; document.getElementById('setupRunnerUp').innerText = "₦20,000"; } 
-            else if(mode === 'Squad') { document.getElementById('btnSquad').classList.add('active'); currentFee = 5000; document.getElementById('displayFee').innerText = "₦5,000"; document.getElementById('displayPrize').innerText = "₦70,000"; document.getElementById('setupMode').innerText = "Squad Custom Room"; document.getElementById('setupSlots').innerText = "48 Players"; document.getElementById('setupRunnerUp').innerText = "₦30,000"; }
-        }
-
-        window.previewImage = function(event) { const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { document.getElementById('imagePreview').src = e.target.result; document.getElementById('previewContainer').classList.remove('hidden'); uploadedImageBase64 = e.target.result; }; reader.readAsDataURL(file); } }
-        window.previewReceipt = function(event) { const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { document.getElementById('receiptPreview').src = e.target.result; document.getElementById('receiptPreviewContainer').classList.remove('hidden'); uploadedReceiptBase64 = e.target.result; }; reader.readAsDataURL(file); } }
-        window.showStep = function(step) { for(let i=1; i<=5; i++) { document.getElementById('step'+i).classList.add('hidden'); } document.getElementById('step'+step).classList.remove('hidden'); }
-
-        window.startScanning = async function() {
-            const name = document.getElementById('agentName').value.trim(); 
-            const ffId = document.getElementById('ffId').value.trim();
-            
-            if (!name || !ffId) { alert("Please fill all text fields."); return; } 
-            if (!uploadedImageBase64) { alert("Please upload your profile screenshot."); return; }
-
-            userData = { name, ffId, mode: currentMode, fee: currentFee };
-            document.getElementById('displayFfId').innerText = ffId;
-            document.getElementById('payFeeDisplay').innerText = `₦${currentFee.toLocaleString()}`; 
-            document.getElementById('payBtnFee').innerText = `₦${currentFee.toLocaleString()}`;
-            
-            showStep(3);
-
-            // SAVE TO FIREBASE
-            try {
-                if(auth.currentUser) {
-                    const userRef = doc(db, "users", auth.currentUser.uid);
-                    await updateDoc(userRef, {
-                        agentName: name,
-                        ffId: ffId,
-                        mode: currentMode,
-                        amountPaid: currentFee
-                    });
-                }
-            } catch (error) {
-                console.error("Error saving data: ", error);
-            }
-
-            let progress = 0;
-            let bar = document.getElementById('scanBar');
-            let log = document.getElementById('scanLog');
-            
-            let interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 100) progress = 100;
-                bar.style.width = progress + "%";
-                if (progress > 20 && progress < 40) log.innerText = "> Bypassing Tencent Encryption...";
-                if (progress > 40 && progress < 60) log.innerText = "> Cross-referencing UID...";
-                if (progress > 60 && progress < 80) log.innerText = "> Verifying Profile Rank...";
-                if (progress > 80 && progress < 100) log.innerText = "> Generating Agent Clearance...";
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    log.innerText = "> VERIFICATION COMPLETE ✅";
-                    setTimeout(() => { showStep(4); }, 800);
-                }
-            }, 200);
-        }
-
-        window.generateBriefing = function() {
-            if (!uploadedReceiptBase64) { alert("Please upload your payment receipt before proceeding."); return; }
-            const randomSector = Math.floor(Math.random() * 900) + 100;
-            
-            document.getElementById('briefName').innerText = userData.name.toUpperCase(); 
-            document.getElementById('briefMode').innerText = userData.mode.toUpperCase(); 
-            document.getElementById('badgeSector').innerText = `SECTOR ${randomSector}`;
-            
-            const tgMessage = encodeURIComponent(`Hello Officer, I am Agent ${userData.name}. My Badge is Sector ${randomSector}. I am registering for the ${userData.mode} tournament. My FF ID is ${userData.ffId}. I have paid the ₦${userData.fee} access fee to Opay. I am attaching my receipt now.`);
-            
-            document.getElementById('telegramLink').href = `https://t.me/${TELEGRAM_HANDLE}?text=${tgMessage}`;
-            
-            showStep(5);
-        }
-    </script>
-</body>
-</html>
+            else if(mode === 'Squad') {
