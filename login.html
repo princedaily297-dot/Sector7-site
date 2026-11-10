@@ -6,21 +6,53 @@
     <title>Sector 7 - Secure Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background-color: #050505; color: #fff; }
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap');
+        body { font-family: 'Rajdhani', sans-serif; background-color: #050505; color: #fff; background-image: url('https://i.ibb.co/4n3VqJdJ/ae42fd769586e8e9f6af3ad83c4f46b7.jpg'); background-size: cover; background-position: center top; background-attachment: fixed; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(5, 0, 0, 0.95) 100%); z-index: -1; }
+        .tech-font { font-family: 'Share Tech Mono', monospace; }
+        .tactical-card { border: 1px solid #444; box-shadow: 0 0 30px rgba(234, 179, 8, 0.2); background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px); position: relative; }
+        .hud-corner { position: absolute; width: 20px; height: 20px; border-color: #eab308; border-style: solid; }
+        .hud-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+        .hud-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+        .hud-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+        .hud-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+        .premium-btn { background: linear-gradient(90deg, #ea580c 0%, #eab308 100%); color: #000; transition: all 0.3s ease; text-shadow: 0px 0px 2px rgba(255,255,255,0.5); }
         .hidden { display: none !important; }
-        .premium-btn { background: linear-gradient(90deg, #ea580c 0%, #eab308 100%); color: #000; font-weight: bold; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-md bg-gray-900 border border-gray-700 rounded p-8">
-        <h1 class="text-2xl text-white font-bold mb-4 text-center">Sector 7 Login</h1>
-        <input type="email" id="email" class="w-full p-2 mb-2 bg-black text-white border border-gray-600 rounded" placeholder="Email">
-        <input type="password" id="password" class="w-full p-2 mb-4 bg-black text-white border border-gray-600 rounded" placeholder="Password">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div class="overlay"></div>
+
+    <div class="w-full max-w-md tactical-card rounded-md p-8 relative z-10">
+        <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div><div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
+
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold uppercase tracking-widest text-white drop-shadow-md">SECTOR 7</h1>
+            <h2 class="text-xl font-bold text-yellow-500 tracking-[0.2em] mb-2">E S P O R T S</h2>
+            <p class="tech-font text-[10px] text-orange-400 mt-1 uppercase tracking-[0.3em]">Tactical Recruitment Protocol</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="tech-font block text-gray-400 text-xs mb-1 uppercase tracking-widest">Free Fire Email</label>
+                <input type="email" id="email" class="w-full bg-black/60 border border-gray-600 rounded p-3 text-white focus:outline-none focus:border-orange-500" placeholder="agent@ff.com">
+            </div>
+            <div>
+                <label class="tech-font block text-gray-400 text-xs mb-1 uppercase tracking-widest">Access Password</label>
+                <input type="password" id="password" class="w-full bg-black/60 border border-gray-600 rounded p-3 text-white focus:outline-none focus:border-orange-500" placeholder="Min 6 characters">
+            </div>
+        </div>
+
+        <button id="authBtn" onclick="handleAuth()" class="premium-btn w-full mt-8 font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">
+            Register Account
+        </button>
+
+        <p class="tech-font text-center text-xs text-gray-400 mt-6 cursor-pointer hover:text-yellow-500 transition-colors uppercase" onclick="toggleMode()">
+            <span id="modeText">Already registered? Login here.</span>
+        </p>
         
-        <button id="authBtn" onclick="handleAuth()" class="premium-btn w-full py-2 rounded">Register / Login</button>
-        
-        <p id="errorMsg" class="text-red-500 text-sm mt-4 hidden"></p>
-        <p id="successMsg" class="text-green-500 text-sm mt-4 hidden"></p>
+        <p id="errorMsg" class="tech-font text-center text-red-500 text-xs mt-4 font-bold hidden bg-red-900/20 p-2 rounded border border-red-900"></p>
+        <p id="successMsg" class="tech-font text-center text-green-400 text-xs mt-4 font-bold hidden bg-green-900/20 p-2 rounded border border-green-900"></p>
     </div>
 
     <script type="module">
@@ -41,62 +73,73 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        let isLoginMode = false;
         const authBtn = document.getElementById('authBtn');
+        const modeText = document.getElementById('modeText');
         const errorMsg = document.getElementById('errorMsg');
         const successMsg = document.getElementById('successMsg');
 
+        // KEEP THEM LOGGED IN (But don't interrupt the registration process)
         onAuthStateChanged(auth, (user) => {
-            if (user) { 
-                // Only redirect if we are on the login page
-                if(window.location.pathname.includes("index") || window.location.pathname === "/") {
-                    window.location.href = "tournament.html"; 
-                }
+            if (user && isLoginMode) { 
+                window.location.href = "tournament.html"; 
             }
         });
+
+        window.toggleMode = function() {
+            isLoginMode = !isLoginMode;
+            authBtn.innerText = isLoginMode ? "LOGIN TO PORTAL" : "REGISTER ACCOUNT";
+            modeText.innerText = isLoginMode ? "Need an account? Register here." : "Already registered? Login here.";
+            errorMsg.classList.add('hidden'); successMsg.classList.add('hidden');
+        }
 
         window.handleAuth = async function() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             
-            errorMsg.classList.add('hidden'); 
-            successMsg.classList.add('hidden');
+            errorMsg.classList.add('hidden'); successMsg.classList.add('hidden');
 
             if(!email || password.length < 6) {
-                errorMsg.innerText = "Enter valid email and password (min 6 chars)."; 
-                errorMsg.classList.remove('hidden');
-                return;
+                showError("Please enter a valid email and a password with at least 6 characters."); return;
             }
 
-            authBtn.innerText = "PROCESSING..."; 
-            authBtn.disabled = true;
+            authBtn.innerText = "PROCESSING..."; authBtn.disabled = true;
 
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                // TRY TO SAVE TO FIRESTORE
-                try {
+                if (isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // Redirect happens automatically in onAuthStateChanged
+                } else {
+                    // 1. Create the user
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    // 2. Save to Firestore
                     await setDoc(doc(db, "users", user.uid), {
                         email: email,
                         joinedAt: new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' }),
+                        status: "Registered",
                         paymentStatus: "Unpaid"
                     });
-                    successMsg.innerText = "Saved to Database Successfully!"; 
-                    successMsg.classList.remove('hidden');
-                } catch (dbError) {
-                    // THIS WILL POP UP AND TELL US EXACTLY WHY IT FAILED
-                    alert("DATABASE ERROR: " + dbError.message);
-                    errorMsg.innerText = "Failed to save to database.";
-                    errorMsg.classList.remove('hidden');
-                }
 
+                    // 3. Show success and redirect ONLY after save is complete
+                    showSuccess("Registration Successful! Redirecting...");
+                    setTimeout(() => {
+                        window.location.href = "tournament.html";
+                    }, 1500);
+                }
             } catch (error) {
-                authBtn.innerText = "Register / Login"; 
+                authBtn.innerText = isLoginMode ? "LOGIN TO PORTAL" : "REGISTER ACCOUNT";
                 authBtn.disabled = false;
-                errorMsg.innerText = error.message; 
-                errorMsg.classList.remove('hidden');
+                let cleanError = error.message.replace("Firebase: ", "");
+                if (cleanError.includes("auth/email-already-in-use")) cleanError = "This Email is already registered.";
+                if (cleanError.includes("auth/invalid-credential")) cleanError = "Invalid Email or Password.";
+                showError(cleanError);
             }
         }
+
+        function showError(msg) { errorMsg.innerText = `[ERROR] ${msg}`; errorMsg.classList.remove('hidden'); }
+        function showSuccess(msg) { successMsg.innerText = `[SUCCESS] ${msg}`; successMsg.classList.remove('hidden'); }
     </script>
 </body>
 </html>
