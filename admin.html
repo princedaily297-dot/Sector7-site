@@ -15,7 +15,6 @@
 <body class="min-h-screen p-4 flex flex-col items-center">
 
     <div class="w-full max-w-md mt-6">
-        <!-- Header -->
         <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
             <div>
                 <h1 class="text-2xl font-bold uppercase tracking-widest text-white">Admin Command</h1>
@@ -24,7 +23,6 @@
             <a href="index.html" class="tech-font text-xs bg-red-900/50 border border-red-700 text-red-400 px-3 py-1 rounded hover:bg-red-800 transition">EXIT</a>
         </div>
 
-        <!-- Stats Panel -->
         <div class="grid grid-cols-2 gap-4 mb-6">
             <div class="tactical-border p-4 rounded text-center">
                 <p class="tech-font text-gray-400 text-xs mb-1 uppercase">Total Users</p>
@@ -40,10 +38,9 @@
             🔄 REFRESH DATABASE
         </button>
 
-        <!-- User List -->
         <div class="tactical-border rounded p-4">
             <h2 class="text-lg font-bold text-white mb-4 border-b border-gray-800 pb-2">Registered Agents</h2>
-            <div id="userList" class="space-y-3 max-h-96 overflow-y-auto text-sm font-sans">
+            <div id="userList" class="space-y-3 max-h-[60vh] overflow-y-auto text-sm font-sans">
                 <p class="tech-font text-gray-500 italic">Scanning database...</p>
             </div>
         </div>
@@ -85,14 +82,13 @@
                     count++;
                     if(data.paymentStatus === "Paid") paidCount++;
 
-                    // Check if they have filled the tournament form yet
-                    let ffDetails = `<p class="text-gray-500 text-xs italic mt-1">Has not filled Tournament Form yet.</p>`;
+                    let ffDetails = `<p class="text-gray-500 text-[10px] italic mt-1">Tournament form not filled yet.</p>`;
                     if (data.ffId) {
                         ffDetails = `
-                            <div class="mt-1 bg-black/50 p-1 rounded border border-gray-800">
-                                <p class="text-[10px] text-gray-400">IGN: <span class="text-white">${data.agentName}</span></p>
+                            <div class="mt-2 bg-black/60 p-2 rounded border border-gray-700">
+                                <p class="text-[10px] text-gray-400">IGN: <span class="text-white font-bold">${data.agentName}</span></p>
                                 <p class="text-[10px] text-gray-400">UID: <span class="text-white">${data.ffId}</span></p>
-                                <p class="text-[10px] text-gray-400">Mode: <span class="text-orange-400">${data.mode} (₦${data.amountPaid})</span></p>
+                                <p class="text-[10px] text-orange-400">Mode: <span class="text-white font-bold">${data.mode} (₦${data.amountPaid})</span></p>
                             </div>
                         `;
                     }
@@ -107,10 +103,10 @@
                     html += `
                         <div class="bg-black p-3 border border-gray-800 rounded mb-3">
                             <div class="flex justify-between items-start mb-1">
-                                <p class="text-white font-bold text-xs truncate max-w-[150px]">${data.email}</p>
+                                <p class="text-white font-bold text-sm truncate max-w-[180px]">${data.email}</p>
                                 <div>${actionBtn}</div>
                             </div>
-                            <p class="tech-font text-[9px] text-gray-600">${new Date(data.joinedAt).toLocaleDateString()}</p>
+                            <p class="tech-font text-[9px] text-gray-500 mb-2">Joined: ${data.joinedAt}</p>
                             ${ffDetails}
                         </div>
                     `;
