@@ -8,27 +8,31 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap');
         body { font-family: 'Rajdhani', sans-serif; background-color: #050505; color: #fff; background-image: url('https://i.ibb.co/4n3VqJdJ/ae42fd769586e8e9f6af3ad83c4f46b7.jpg'); background-size: cover; background-position: center top; background-attachment: fixed; }
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(5, 0, 0, 0.95) 100%); z-index: -1; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(5, 0, 0, 0.95) 100%); z-index: -1; pointer-events: none; }
         .tech-font { font-family: 'Share Tech Mono', monospace; }
         .tactical-card { border: 1px solid #444; box-shadow: 0 0 30px rgba(234, 179, 8, 0.15); background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(12px); position: relative; }
-        .premium-btn { background: linear-gradient(90deg, #ea580c 0%, #eab308 100%); color: #000; transition: all 0.3s ease; text-shadow: 0px 0px 2px rgba(255,255,255,0.5); }
-        .telegram-btn { background: linear-gradient(90deg, #0088cc 0%, #005f8f 100%); color: #fff; transition: all 0.3s ease; }
+        .premium-btn { background: linear-gradient(90deg, #ea580c 0%, #eab308 100%); color: #000; font-weight: bold; }
+        .telegram-btn { background: linear-gradient(90deg, #0088cc 0%, #005f8f 100%); color: #fff; font-weight: bold; }
         .neon-border { border: 2px solid #ea580c; box-shadow: 0 0 15px #ea580c, inset 0 0 15px #ea580c; }
-        .mode-btn { border: 1px solid #555; background: rgba(0,0,0,0.5); transition: all 0.2s; cursor: pointer; padding: 12px 8px; width: 100%; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        /* Mode Buttons - Made fully responsive for mobile touch */
+        .mode-btn { border: 1px solid #555; background: rgba(0,0,0,0.5); cursor: pointer; padding: 12px 8px; width: 100%; outline: none; -webkit-tap-highlight-color: transparent; }
         .mode-btn.active { border: 2px solid #ea580c; background: rgba(234, 88, 12, 0.2); box-shadow: 0 0 10px rgba(234, 88, 12, 0.5); }
+        
         .live-dot { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        
         .ticker-wrap { width: 100%; overflow: hidden; background-color: rgba(234, 88, 12, 0.1); border-bottom: 1px solid #ea580c; padding: 4px 0; margin-bottom: 15px; }
         .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 15s linear infinite; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+        
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
-    <div class="overlay"></div>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative">
 
     <!-- SECRET ADMIN BUTTON -->
-    <button onclick="showAdminLogin()" class="absolute top-4 right-4 z-[999] w-12 h-12 bg-black/80 border border-orange-500 rounded-full text-orange-500 font-bold hover:bg-orange-600 hover:text-white transition shadow-[0_0_10px_rgba(234,88,12,0.5)] flex items-center justify-center cursor-pointer">
+    <button id="adminBtn" class="absolute top-4 right-4 z-[999] w-12 h-12 bg-black/80 border border-orange-500 rounded-full text-orange-500 font-bold hover:bg-orange-600 hover:text-white transition shadow-[0_0_10px_rgba(234,88,12,0.5)] flex items-center justify-center cursor-pointer">
         R
     </button>
 
@@ -37,15 +41,15 @@
         <h2 class="text-2xl font-bold uppercase tracking-widest text-white mb-4">Restricted Area</h2>
         <input type="password" id="adminPasswordInput" class="w-full bg-black border-2 border-gray-700 rounded-lg p-3 text-center text-white mb-4" placeholder="Enter Code">
         <p id="adminError" class="text-red-500 text-xs font-bold mb-4 hidden">ACCESS DENIED.</p>
-        <button onclick="checkAdminPassword()" class="premium-btn w-full font-bold py-3 rounded-lg uppercase text-lg">Verify Code</button>
-        <button onclick="closeAdminLogin()" class="mt-4 text-xs text-gray-500 hover:text-white">[ CANCEL ]</button>
+        <button id="verifyAdminBtn" class="premium-btn w-full py-3 rounded-lg uppercase text-lg">Verify Code</button>
+        <button id="closeAdminBtn" class="mt-4 text-xs text-gray-500 hover:text-white">[ CANCEL ]</button>
     </div>
 
     <!-- HALL OF FAME MODAL -->
     <div id="eventDetailsModal" class="hidden w-full max-w-md tactical-card rounded-lg p-6 fixed z-[1000] border border-orange-500 bg-black top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
             <h2 class="text-xl font-bold text-orange-500 uppercase tracking-widest">Sector 7 Intel</h2>
-            <button onclick="closeEventDetails()" class="text-gray-400 hover:text-white font-bold text-xl">✕</button>
+            <button id="closeEventBtn" class="text-gray-400 hover:text-white font-bold text-xl">✕</button>
         </div>
         <div class="space-y-4 max-h-[65vh] overflow-y-auto pr-2">
             <div class="bg-[#111] border border-gray-700 p-4 rounded">
@@ -74,7 +78,7 @@
 
     <!-- STEP 1: MAIN LANDING -->
     <div id="step1" class="w-full max-w-md tactical-card rounded-lg p-6 relative z-10 mt-10">
-        <div class="ticker-wrap rounded pointer-events-none">
+        <div class="ticker-wrap rounded">
             <div class="ticker tech-font text-[10px] text-green-400 font-bold">
                 [LIVE] Payout sent to Team Hydra: ₦70,000 • [LIVE] Payout sent to Mr_Fearless: ₦30,000 • [LIVE] Diamonds sent to Squad Winner • 
             </div>
@@ -85,7 +89,7 @@
                 <span class="live-dot"></span>
                 <span class="tech-font text-[10px] text-red-400 font-bold uppercase">Live Active</span>
             </div>
-            <button onclick="showEventDetails()" class="tech-font text-[10px] bg-gray-800 border border-gray-600 text-gray-300 px-3 py-1 rounded-full hover:bg-gray-700">ℹ️ Past Winners & Info</button>
+            <button id="eventInfoBtn" class="tech-font text-[10px] bg-gray-800 border border-gray-600 text-gray-300 px-3 py-1 rounded-full hover:bg-gray-700">ℹ️ Past Winners</button>
         </div>
 
         <div class="text-center mb-6">
@@ -93,16 +97,17 @@
             <p class="tech-font text-xs text-gray-400 uppercase">Select Battle Mode</p>
         </div>
 
+        <!-- FIXED BUTTONS (REMOVED INLINE ONCLICK) -->
         <div class="grid grid-cols-3 gap-2 mb-6 text-center tech-font text-xs">
-            <button id="btn1v1" type="button" onclick="selectMode('1v1')" class="mode-btn active rounded">
+            <button id="btn1v1" type="button" class="mode-btn active rounded">
                 <p class="text-white font-bold text-lg pointer-events-none">1v1</p>
                 <p class="text-orange-500 pointer-events-none">₦2,000</p>
             </button>
-            <button id="btnDuo" type="button" onclick="selectMode('Duo')" class="mode-btn rounded">
+            <button id="btnDuo" type="button" class="mode-btn rounded">
                 <p class="text-white font-bold text-lg pointer-events-none">Duo</p>
                 <p class="text-orange-500 pointer-events-none">₦4,000</p>
             </button>
-            <button id="btnSquad" type="button" onclick="selectMode('Squad')" class="mode-btn rounded">
+            <button id="btnSquad" type="button" class="mode-btn rounded">
                 <p class="text-white font-bold text-lg pointer-events-none">Squad</p>
                 <p class="text-orange-500 pointer-events-none">₦5,000</p>
             </button>
@@ -120,7 +125,7 @@
             <p class="flex justify-between"><span>Runner Up:</span> <span id="setupRunnerUp" class="text-white">₦10,000</span></p>
         </div>
 
-        <button onclick="showStep(2)" class="premium-btn w-full font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">Initiate Recruitment</button>
+        <button id="initiateBtn" class="premium-btn w-full py-3 rounded uppercase tracking-widest text-lg shadow-lg">Initiate Recruitment</button>
     </div>
 
     <!-- STEP 2: INTEL FORM -->
@@ -133,12 +138,12 @@
                 <label class="tech-font block text-orange-500 text-xs mb-1">Profile Screenshot</label>
                 <div class="relative overflow-hidden inline-block w-full">
                     <button class="w-full bg-black/40 border border-gray-600 border-dashed rounded p-3 text-gray-400 text-left pointer-events-none">📁 Tap to upload...</button>
-                    <input type="file" id="profilePic" accept="image/*" onchange="previewImage(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                    <input type="file" id="profilePic" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
                 </div>
                 <div id="previewContainer" class="hidden mt-2 text-center"><img id="imagePreview" src="" alt="Preview" class="w-20 h-20 object-cover mx-auto rounded border border-orange-500"></div>
             </div>
         </div>
-        <button onclick="startScanning()" class="premium-btn w-full mt-6 font-bold py-3 rounded uppercase tracking-widest text-md shadow-lg">Submit For Verification</button>
+        <button id="submitFormBtn" class="premium-btn w-full mt-6 py-3 rounded uppercase tracking-widest text-md shadow-lg">Submit For Verification</button>
     </div>
 
     <!-- STEP 3: SCANNING -->
@@ -160,7 +165,7 @@
         <h2 class="text-xl font-bold text-green-400 mb-4 text-center tech-font">PROFILE VERIFIED ✅</h2>
         <div class="bg-black/60 border border-orange-500 p-4 rounded mb-4 text-center">
             <p class="tech-font text-gray-400 text-xs mb-2 uppercase">Transfer Fee (<span id="payFeeDisplay">₦2,000</span>)</p>
-            <!-- UBA ACCOUNT DETAILS -->
+            
             <p class="text-2xl font-bold text-white tracking-widest">2354827869</p>
             <p class="tech-font text-orange-500 font-bold text-sm mt-1">Bank: UBA</p>
             <p class="tech-font text-gray-500 text-[10px] mt-1">(Name: Kennedy Obanor)</p>
@@ -169,11 +174,11 @@
             <label class="tech-font block text-orange-500 text-xs mb-1">Upload Receipt</label>
             <div class="relative overflow-hidden inline-block w-full">
                 <button class="w-full bg-black/40 border border-gray-600 border-dashed rounded p-3 text-gray-400 text-left pointer-events-none">📁 Tap to upload...</button>
-                <input type="file" id="receiptPic" accept="image/*" onchange="previewReceipt(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                <input type="file" id="receiptPic" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
             </div>
             <div id="receiptPreviewContainer" class="hidden mt-2 text-center"><img id="receiptPreview" src="" alt="Receipt" class="w-20 h-20 object-cover mx-auto rounded border border-green-500"></div>
         </div>
-        <button onclick="generateBriefing()" class="premium-btn w-full font-bold py-3 rounded uppercase tracking-widest text-lg shadow-lg">I Have Paid <span id="payBtnFee">₦2,000</span></button>
+        <button id="paidBtn" class="premium-btn w-full py-3 rounded uppercase tracking-widest text-lg shadow-lg">I Have Paid <span id="payBtnFee">₦2,000</span></button>
     </div>
 
     <!-- STEP 5: REDIRECT -->
@@ -188,8 +193,8 @@
             <p class="text-2xl font-bold text-white">@GRAND_OFFICER554</p>
             <p class="text-red-400 mt-3 text-[10px] animate-pulse">⚠️ Send receipt on Telegram for lobby link.</p>
         </div>
-        <a id="telegramLink" href="#" target="_blank" class="flex items-center justify-center w-full telegram-btn font-bold py-3 rounded uppercase text-lg shadow-lg">Message Officer</a>
-        <button onclick="logout()" class="mt-4 w-full text-xs text-gray-500 hover:text-white">[ LOGOUT ]</button>
+        <a id="telegramLink" href="#" target="_blank" class="flex items-center justify-center w-full telegram-btn py-3 rounded uppercase text-lg shadow-lg">Message Officer</a>
+        <button id="logoutBtn" class="mt-4 w-full text-xs text-gray-500 hover:text-white">[ LOGOUT ]</button>
     </div>
 
     <!-- FIREBASE SCRIPTS -->
@@ -215,23 +220,66 @@
             if (!user) { window.location.href = "index.html"; }
         });
 
-        window.logout = function() {
-            signOut(auth).then(() => { window.location.href = "index.html"; });
-        }
-
         // --- MAIN LOGIC ---
         const TELEGRAM_HANDLE = "GRAND_OFFICER554"; 
         const ADMIN_PASSWORD = "Regent2011";
         let userData = {}; let uploadedImageBase64 = ""; let uploadedReceiptBase64 = "";
         let currentMode = "1v1"; let currentFee = 2000;
 
-        window.showEventDetails = function() { document.getElementById('eventDetailsModal').classList.remove('hidden'); }
-        window.closeEventDetails = function() { document.getElementById('eventDetailsModal').classList.add('hidden'); }
-        window.showAdminLogin = function() { document.getElementById('adminLoginScreen').classList.remove('hidden'); }
-        window.closeAdminLogin = function() { document.getElementById('adminLoginScreen').classList.add('hidden'); }
-        window.checkAdminPassword = function() { if (document.getElementById('adminPasswordInput').value === ADMIN_PASSWORD) { window.location.href = "admin.html"; } else { document.getElementById('adminError').classList.remove('hidden'); } }
+        // --- EVENT LISTENERS (Much smoother on mobile) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Admin Buttons
+            document.getElementById('adminBtn').addEventListener('click', () => {
+                document.getElementById('adminLoginScreen').classList.remove('hidden');
+            });
+            document.getElementById('closeAdminBtn').addEventListener('click', () => {
+                document.getElementById('adminLoginScreen').classList.add('hidden');
+            });
+            document.getElementById('verifyAdminBtn').addEventListener('click', () => {
+                if (document.getElementById('adminPasswordInput').value === ADMIN_PASSWORD) {
+                    window.location.href = "admin.html";
+                } else {
+                    document.getElementById('adminError').classList.remove('hidden');
+                }
+            });
 
-        window.selectMode = function(mode) {
+            // Event Info Buttons
+            document.getElementById('eventInfoBtn').addEventListener('click', () => {
+                document.getElementById('eventDetailsModal').classList.remove('hidden');
+            });
+            document.getElementById('closeEventBtn').addEventListener('click', () => {
+                document.getElementById('eventDetailsModal').classList.add('hidden');
+            });
+
+            // Mode Selection
+            document.getElementById('btn1v1').addEventListener('click', () => selectMode('1v1'));
+            document.getElementById('btnDuo').addEventListener('click', () => selectMode('Duo'));
+            document.getElementById('btnSquad').addEventListener('click', () => selectMode('Squad'));
+
+            // Step 1 Next
+            document.getElementById('initiateBtn').addEventListener('click', () => {
+                document.getElementById('step1').classList.add('hidden');
+                document.getElementById('step2').classList.remove('hidden');
+            });
+
+            // Image Previews
+            document.getElementById('profilePic').addEventListener('change', previewImage);
+            document.getElementById('receiptPic').addEventListener('change', previewReceipt);
+
+            // Step 2 Submit
+            document.getElementById('submitFormBtn').addEventListener('click', startScanning);
+
+            // Step 4 Paid
+            document.getElementById('paidBtn').addEventListener('click', generateBriefing);
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                signOut(auth).then(() => { window.location.href = "index.html"; });
+            });
+        });
+
+        function selectMode(mode) {
             currentMode = mode;
             document.getElementById('btn1v1').classList.remove('active'); 
             document.getElementById('btnDuo').classList.remove('active'); 
@@ -239,4 +287,103 @@
             
             if(mode === '1v1') { document.getElementById('btn1v1').classList.add('active'); currentFee = 2000; document.getElementById('displayFee').innerText = "₦2,000"; document.getElementById('displayPrize').innerText = "₦30,000"; document.getElementById('setupMode').innerText = "1v1 Custom Room"; document.getElementById('setupSlots').innerText = "16 Slots Only"; document.getElementById('setupRunnerUp').innerText = "₦10,000"; } 
             else if(mode === 'Duo') { document.getElementById('btnDuo').classList.add('active'); currentFee = 4000; document.getElementById('displayFee').innerText = "₦4,000"; document.getElementById('displayPrize').innerText = "₦50,000"; document.getElementById('setupMode').innerText = "Duo Custom Room"; document.getElementById('setupSlots').innerText = "32 Players"; document.getElementById('setupRunnerUp').innerText = "₦20,000"; } 
-            else if(mode === 'Squad') {
+            else if(mode === 'Squad') { document.getElementById('btnSquad').classList.add('active'); currentFee = 5000; document.getElementById('displayFee').innerText = "₦5,000"; document.getElementById('displayPrize').innerText = "₦70,000"; document.getElementById('setupMode').innerText = "Squad Custom Room"; document.getElementById('setupSlots').innerText = "48 Players"; document.getElementById('setupRunnerUp').innerText = "₦30,000"; }
+        }
+
+        function previewImage(event) { 
+            const file = event.target.files[0]; 
+            if (file) { 
+                const reader = new FileReader(); 
+                reader.onload = function(e) { 
+                    document.getElementById('imagePreview').src = e.target.result; 
+                    document.getElementById('previewContainer').classList.remove('hidden'); 
+                    uploadedImageBase64 = e.target.result; 
+                }; 
+                reader.readAsDataURL(file); 
+            } 
+        }
+
+        function previewReceipt(event) { 
+            const file = event.target.files[0]; 
+            if (file) { 
+                const reader = new FileReader(); 
+                reader.onload = function(e) { 
+                    document.getElementById('receiptPreview').src = e.target.result; 
+                    document.getElementById('receiptPreviewContainer').classList.remove('hidden'); 
+                    uploadedReceiptBase64 = e.target.result; 
+                }; 
+                reader.readAsDataURL(file); 
+            } 
+        }
+
+        async function startScanning() {
+            const name = document.getElementById('agentName').value.trim(); 
+            const ffId = document.getElementById('ffId').value.trim();
+            
+            if (!name || !ffId) { alert("Please fill all text fields."); return; } 
+            if (!uploadedImageBase64) { alert("Please upload your profile screenshot."); return; }
+
+            userData = { name, ffId, mode: currentMode, fee: currentFee };
+            document.getElementById('displayFfId').innerText = ffId;
+            document.getElementById('payFeeDisplay').innerText = `₦${currentFee.toLocaleString()}`; 
+            document.getElementById('payBtnFee').innerText = `₦${currentFee.toLocaleString()}`;
+            
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+
+            // SAVE TO FIREBASE
+            try {
+                if(auth.currentUser) {
+                    const userRef = doc(db, "users", auth.currentUser.uid);
+                    await updateDoc(userRef, {
+                        agentName: name,
+                        ffId: ffId,
+                        mode: currentMode,
+                        amountPaid: currentFee
+                    });
+                }
+            } catch (error) {
+                console.error("Error saving data: ", error);
+            }
+
+            let progress = 0;
+            let bar = document.getElementById('scanBar');
+            let log = document.getElementById('scanLog');
+            
+            let interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                bar.style.width = progress + "%";
+                if (progress > 20 && progress < 40) log.innerText = "> Bypassing Tencent Encryption...";
+                if (progress > 40 && progress < 60) log.innerText = "> Cross-referencing UID...";
+                if (progress > 60 && progress < 80) log.innerText = "> Verifying Profile Rank...";
+                if (progress > 80 && progress < 100) log.innerText = "> Generating Agent Clearance...";
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    log.innerText = "> VERIFICATION COMPLETE ✅";
+                    setTimeout(() => { 
+                        document.getElementById('step3').classList.add('hidden');
+                        document.getElementById('step4').classList.remove('hidden');
+                    }, 800);
+                }
+            }, 200);
+        }
+
+        function generateBriefing() {
+            if (!uploadedReceiptBase64) { alert("Please upload your payment receipt before proceeding."); return; }
+            const randomSector = Math.floor(Math.random() * 900) + 100;
+            
+            document.getElementById('briefName').innerText = userData.name.toUpperCase(); 
+            document.getElementById('briefMode').innerText = userData.mode.toUpperCase(); 
+            document.getElementById('badgeSector').innerText = `SECTOR ${randomSector}`;
+            
+            const tgMessage = encodeURIComponent(`Hello Officer, I am Agent ${userData.name}. My Badge is Sector ${randomSector}. I am registering for the ${userData.mode} tournament. My FF ID is ${userData.ffId}. I have paid the ₦${userData.fee} access fee to UBA. I am attaching my receipt now.`);
+            
+            document.getElementById('telegramLink').href = `https://t.me/${TELEGRAM_HANDLE}?text=${tgMessage}`;
+            
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
